@@ -1,7 +1,10 @@
 package vn.edu.crs.course_service.demo1.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.edu.crs.course_service.demo1.dto.CourseDTO;
 import vn.edu.crs.course_service.demo1.entity.Course;
 import vn.edu.crs.course_service.demo1.repository.CourseRepository;
@@ -22,6 +25,15 @@ public class CourseService {
                 .stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    // Tìm kiếm và phân trang danh sách môn học
+    public Page<CourseDTO> search(String keyword, Pageable pageable) {
+        Page<Course> courses = (keyword == null || keyword.isBlank())
+                ? courseRepository.findAll(pageable)
+                : courseRepository.findByTenMonHocContainingIgnoreCase(keyword.trim(), pageable);
+
+        return courses.map(this::toDTO);
     }
 
     // Lấy theo ID
@@ -76,6 +88,35 @@ public class CourseService {
         }
 
         courseRepository.deleteById(id);
+    }
+
+    // API nội bộ dùng khi registration-service tạo đăng ký
+    @Transactional
+    public CourseDTO reserveSeat(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() ->
+                        new NoSuchElementException("Không tìm thấy môn học có id = " + courseId));
+
+        if (course.getSoChoConLai() <= 0) {
+            throw new IllegalStateException("Môn học đã hết chỗ, không thể đăng ký");
+        }
+
+        course.setSoChoConLai(course.getSoChoConLai() - 1);
+        return toDTO(courseRepository.save(course));
+    }
+
+    // API nội bộ dùng khi registration-service hủy đăng ký
+    @Transactional
+    public CourseDTO releaseSeat(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() ->
+                        new NoSuchElementException("Không tìm thấy môn học có id = " + courseId));
+
+        if (course.getSoChoConLai() < course.getSoChoToiDa()) {
+            course.setSoChoConLai(course.getSoChoConLai() + 1);
+        }
+
+        return toDTO(courseRepository.save(course));
     }
 
     // Entity -> DTO
