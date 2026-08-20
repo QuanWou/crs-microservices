@@ -1,6 +1,5 @@
 package vn.edu.crs.registrationservice.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.edu.crs.registrationservice.client.CourseClient;
 import vn.edu.crs.registrationservice.dto.RegistrationRequestDTO;
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @Service
-@RequiredArgsConstructor
 public class RegistrationService {
 
     private static final String DA_DANG_KY = "DA_DANG_KY";
@@ -19,6 +17,13 @@ public class RegistrationService {
 
     private final RegistrationRepository registrationRepository;
     private final CourseClient courseClient;
+
+    public RegistrationService(
+            RegistrationRepository registrationRepository,
+            CourseClient courseClient) {
+        this.registrationRepository = registrationRepository;
+        this.courseClient = courseClient;
+    }
 
     public Registration register(RegistrationRequestDTO dto) {
         boolean alreadyRegistered =

@@ -1,6 +1,5 @@
 package vn.edu.crs.registrationservice.client;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -11,13 +10,16 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-@RequiredArgsConstructor
 public class CourseClient {
 
     private final RestTemplate restTemplate;
 
     @Value("${course-service.base-url}")
     private String courseServiceBaseUrl;
+
+    public CourseClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public void reserveSeat(Long courseId) {
         exchangeSeatCommand(courseId, "reserve-seat");
