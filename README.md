@@ -1,6 +1,6 @@
 # CRS Microservices — Hệ thống đăng ký học phần
 
-Repository minh họa kiến trúc microservices bằng Spring Boot, Spring Cloud Gateway, JWT, MySQL và React + Vite. Tài liệu LAB 01–05 đã được chuẩn hóa theo source và cổng đang dùng trong dự án này.
+Repository minh họa kiến trúc microservices bằng Spring Boot, Spring Cloud Gateway, JWT, MySQL và React + Vite. Tài liệu LAB 01–06 đã được chuẩn hóa theo source và cổng đang dùng trong dự án này.
 
 ## Mục lục tài liệu
 
@@ -11,6 +11,7 @@ Repository minh họa kiến trúc microservices bằng Spring Boot, Spring Clou
 | [LAB03.md](LAB03.md) | Search, pagination, giữ/trả chỗ, Registration Service |
 | [LAB04.md](LAB04.md) | Auth, JWT, role, Gateway, API key, CORS, Postman đầy đủ |
 | [LAB05.md](LAB05.md) | React TypeScript, Axios, Vite, kết nối Gateway |
+| [LAB06.md](LAB06.md) | Danh sách Course, tìm kiếm debounce, phân trang và bốn trạng thái UI |
 | [docs/thiet-ke-bien-gioi-service.md](docs/thiet-ke-bien-gioi-service.md) | Biên giới trách nhiệm và quyền sở hữu dữ liệu |
 | [docs/blueprint-api.md](docs/blueprint-api.md) | Contract endpoint, status, quyền và mẫu JSON |
 

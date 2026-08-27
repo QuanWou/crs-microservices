@@ -1,10 +1,10 @@
 :root {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
-  color: #14213d;
+    'Segoe UI', sans-serif;
+  color: #173c35;
   background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 34%),
-    #f5f8fc;
+    radial-gradient(circle at 8% 0%, rgba(111, 195, 165, 0.16), transparent 30%),
+    #f2f5f1;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -21,7 +21,24 @@ body {
   margin: 0;
 }
 
+body::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background-image: radial-gradient(rgba(18, 81, 68, 0.07) 0.7px, transparent 0.7px);
+  background-size: 18px 18px;
+  content: '';
+  pointer-events: none;
+}
+
 button,
 input {
   font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(20, 130, 105, 0.28);
+  outline-offset: 3px;
 }

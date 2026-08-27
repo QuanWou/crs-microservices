@@ -406,4 +406,4 @@ Không commit:
 - [ ] `npm run lint` thành công.
 - [ ] `npm run build` thành công.
 
-Xem [README.md](README.md) để chạy nhanh toàn bộ hệ thống và xem mục lục các lab.
+Tiếp theo: [LAB 06 — Danh sách môn học, tìm kiếm và phân trang](LAB06.md).
