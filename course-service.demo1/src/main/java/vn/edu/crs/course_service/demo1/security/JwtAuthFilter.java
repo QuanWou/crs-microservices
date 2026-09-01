@@ -43,12 +43,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .parseSignedClaims(token)
                         .getPayload();
                 String username = claims.getSubject();
+                Number userIdClaim = claims.get("userId", Number.class);
                 String role = claims.get("role", String.class);
 
-                if (username != null && role != null) {
+                if (username != null && role != null && userIdClaim != null) {
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
-                                    username,
+                                    new JwtPrincipal(userIdClaim.longValue(), username),
                                     null,
                                     List.of(new SimpleGrantedAuthority("ROLE_" + role))
                             );

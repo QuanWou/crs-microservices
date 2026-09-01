@@ -215,3 +215,13 @@ Dự án hiện minh họa luồng đồng bộ giữa Registration và Course b
 - Idempotency key và retry/circuit breaker.
 - Auth Context, Login, Course CRUD và Registration UI đầy đủ.
 - Container hóa bằng Docker Compose và quản lý secret riêng.
+
+## 11. Chạy bằng Docker
+
+Toàn bộ 5 ứng dụng và 3 MySQL container có thể chạy bằng:
+
+```powershell
+docker compose up --build -d
+```
+
+Xem hướng dẫn tại [DOCKER.md](DOCKER.md).

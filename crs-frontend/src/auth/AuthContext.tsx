@@ -8,7 +8,7 @@ export const USER_KEY = 'crs_user'
 export interface AuthUser {
   username: string
   role: 'ADMIN' | 'STUDENT'
-  userId?: number
+  userId: number
 }
 
 interface AuthContextValue {

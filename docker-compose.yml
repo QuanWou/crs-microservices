@@ -1,0 +1,134 @@
+name: crs-microservices
+
+services:
+  mysql-auth:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: auth_db
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-auth-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  mysql-course:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: course_db
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-course-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  mysql-registration:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: registration_db
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql-registration-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  auth-service:
+    build: ./auth-service
+    environment:
+      AUTH_DB_URL: jdbc:mysql://mysql-auth:3306/auth_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
+      AUTH_DB_USERNAME: root
+      AUTH_DB_PASSWORD: root123
+      JWT_SECRET: CRS-Microservices-Secret-Key-Nam-3-Hoc-Ky-2026-Doi-Trong-Thuc-Te
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql-auth:
+        condition: service_healthy
+    restart: unless-stopped
+
+  course-service:
+    build: ./course-service.demo1
+    environment:
+      COURSE_DB_URL: jdbc:mysql://mysql-course:3306/course_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
+      COURSE_DB_USERNAME: root
+      COURSE_DB_PASSWORD: root123
+      JWT_SECRET: CRS-Microservices-Secret-Key-Nam-3-Hoc-Ky-2026-Doi-Trong-Thuc-Te
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "8085:8085"
+    depends_on:
+      mysql-course:
+        condition: service_healthy
+    restart: unless-stopped
+
+  registration-service:
+    build: ./registration-service
+    environment:
+      REGISTRATION_DB_URL: jdbc:mysql://mysql-registration:3306/registration_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
+      REGISTRATION_DB_USERNAME: root
+      REGISTRATION_DB_PASSWORD: root123
+      COURSE_SERVICE_BASE_URL: http://course-service:8085
+      JWT_SECRET: CRS-Microservices-Secret-Key-Nam-3-Hoc-Ky-2026-Doi-Trong-Thuc-Te
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "8083:8083"
+    depends_on:
+      mysql-registration:
+        condition: service_healthy
+      course-service:
+        condition: service_started
+    restart: unless-stopped
+
+  api-gateway:
+    build: ./api-gateway
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8081
+      COURSE_SERVICE_URL: http://course-service:8085
+      REGISTRATION_SERVICE_URL: http://registration-service:8083
+      FRONTEND_ORIGIN: http://localhost:5173
+      PARTNER_API_KEY: crs-partner-key-2026
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - course-service
+      - registration-service
+    restart: unless-stopped
+
+  crs-frontend:
+    build:
+      context: ./crs-frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8080
+    ports:
+      - "5173:80"
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+
+volumes:
+  mysql-auth-data:
+  mysql-course-data:
+  mysql-registration-data:

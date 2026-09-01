@@ -12,7 +12,7 @@ import type { Course } from '../types/course'
 
 export default function RegisterCoursePage() {
   const [keyword, setKeyword] = useState(''); const [page, setPage] = useState(0); const [registeringId, setRegisteringId] = useState<number | null>(null)
-  const { user } = useAuth(); const { courses, totalPages, totalElements, state, errorMessage, refetch } = useCourses(keyword, page, 10); const { showToast } = useToast()
+  const { user } = useAuth(); const { courses, totalPages, totalElements, state, errorMessage, refetch } = useCourses(keyword, page, 5); const { showToast } = useToast()
   const handleSearch = useCallback((value: string) => { setKeyword(value); setPage(0) }, [])
   const handleRegister = async (course: Course) => {
     if (!user?.userId) { showToast('Phiên đăng nhập thiếu userId, vui lòng đăng nhập lại.', 'error'); return }

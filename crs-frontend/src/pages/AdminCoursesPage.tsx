@@ -11,7 +11,7 @@ import type { Course, CourseFormValues } from '../types/course'
 
 export default function AdminCoursesPage() {
   const [keyword, setKeyword] = useState(''); const [page, setPage] = useState(0); const [editingCourse, setEditingCourse] = useState<Course | null>(null); const [isFormOpen, setIsFormOpen] = useState(false); const [submitting, setSubmitting] = useState(false); const [formError, setFormError] = useState<string | null>(null)
-  const { courses, totalPages, totalElements, state, errorMessage, refetch } = useCourses(keyword, page, 10)
+  const { courses, totalPages, totalElements, state, errorMessage, refetch } = useCourses(keyword, page, 5)
   const extractErrorMessage = (error: unknown) => { if (axios.isAxiosError<ApiErrorResponse>(error)) { const data = error.response?.data; if (data?.message) return data.message; if (data) { const fieldError = Object.values(data).find((value) => typeof value === 'string'); if (fieldError) return fieldError }; if (!error.response) return 'Không kết nối được tới API Gateway (cổng 8080).'; return `Thao tác thất bại (HTTP ${error.response.status}).` }; return 'Đã xảy ra lỗi, vui lòng thử lại.' }
   const handleSubmit = async (values: CourseFormValues) => { setSubmitting(true); setFormError(null); try { if (editingCourse) await updateCourse(editingCourse.id, values); else await createCourse(values); setEditingCourse(null); setIsFormOpen(false); refetch() } catch (error) { setFormError(extractErrorMessage(error)) } finally { setSubmitting(false) } }
   const handleDelete = async (course: Course) => { if (!window.confirm(`Xóa môn học “${course.tenMonHoc}”?`)) return; try { await deleteCourse(course.id); refetch() } catch (error) { window.alert(extractErrorMessage(error)) } }
