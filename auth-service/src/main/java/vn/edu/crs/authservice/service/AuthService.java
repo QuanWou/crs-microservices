@@ -34,7 +34,10 @@ public class AuthService {
             throw new InvalidCredentialsException("Sai username hoặc password");
         }
 
+        // The two-argument overload remains compatible with earlier labs; the
+        // pending id makes the emitted JWT carry the authenticated user's id.
+        jwtUtil.setUserIdForNextToken(user.getId());
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-        return new LoginResponseDTO(token, user.getUsername(), user.getRole());
+        return new LoginResponseDTO(token, user.getId(), user.getUsername(), user.getRole());
     }
 }

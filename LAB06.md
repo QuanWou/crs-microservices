@@ -213,12 +213,12 @@ Bảng hiển thị:
 | --- | --- |
 | Môn học | `tenMonHoc` và ID hệ thống |
 | Tín chỉ | `soTinChi` |
-| Sức chứa | `soChoConLai / soChoToiDa` và thanh mức sử dụng |
+| Sức chứa | `soChoConLai / soChoToiDa` |
 | Tình trạng | `Đang mở` hoặc `Đã đủ chỗ` |
 
 Khi `soChoConLai === 0`, trạng thái chuyển sang màu cảnh báo. Chi tiết này chuẩn bị cho nút đăng ký ở buổi tiếp theo.
 
-Trên màn hình nhỏ, mỗi dòng bảng chuyển thành card hai cột để không phải kéo ngang.
+Trên màn hình nhỏ, mỗi dòng bảng chuyển thành bố cục dọc có nhãn rõ ràng để không phải kéo ngang.
 
 ## 10. App phối hợp các component
 
@@ -462,4 +462,3 @@ git push origin main
 ```
 
 Chỉ commit sau khi đã xem diff và xác nhận không có token hoặc secret.
-

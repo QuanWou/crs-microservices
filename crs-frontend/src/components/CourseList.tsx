@@ -5,8 +5,12 @@ interface CourseListProps {
   courses: Course[]
   state: LoadState
   errorMessage: string
-  keyword: string
+  keyword?: string
   onRetry: () => void
+  onEdit?: (course: Course) => void
+  onDelete?: (course: Course) => void
+  onRegister?: (course: Course) => void
+  registeringId?: number | null
 }
 
 function LoadingState() {
@@ -27,6 +31,10 @@ export default function CourseList({
   errorMessage,
   keyword,
   onRetry,
+  onEdit,
+  onDelete,
+  onRegister,
+  registeringId,
 }: CourseListProps) {
   if (state === 'loading') {
     return <LoadingState />
@@ -76,38 +84,23 @@ export default function CourseList({
             <th scope="col">Tín chỉ</th>
             <th scope="col">Sức chứa</th>
             <th scope="col">Tình trạng</th>
+            {(onEdit || onDelete || onRegister) && <th scope="col">Thao tác</th>}
           </tr>
         </thead>
         <tbody>
           {courses.map((course) => {
             const isFull = course.soChoConLai === 0
-            const fillPercentage = Math.min(
-              100,
-              Math.max(
-                0,
-                ((course.soChoToiDa - course.soChoConLai) /
-                  course.soChoToiDa) *
-                  100,
-              ),
-            )
 
             return (
               <tr key={course.id}>
                 <td data-label="Môn học">
                   <div className="course-name">{course.tenMonHoc}</div>
-                  <div className="course-id">Mã hệ thống #{course.id}</div>
                 </td>
                 <td data-label="Tín chỉ">
-                  <span className="credit-badge">{course.soTinChi}</span>
+                  {course.soTinChi}
                 </td>
-                <td data-label="Sức chứa">
-                  <div className="capacity-copy">
-                    <strong>{course.soChoConLai}</strong>
-                    <span>/ {course.soChoToiDa} chỗ còn lại</span>
-                  </div>
-                  <div className="capacity-track" aria-hidden="true">
-                    <span style={{ width: `${fillPercentage}%` }} />
-                  </div>
+                <td className={isFull ? 'no-seats' : ''} data-label="Số chỗ">
+                  {course.soChoConLai} / {course.soChoToiDa}
                 </td>
                 <td data-label="Tình trạng">
                   <span
@@ -117,6 +110,13 @@ export default function CourseList({
                     {isFull ? 'Đã đủ chỗ' : 'Đang mở'}
                   </span>
                 </td>
+                {(onEdit || onDelete || onRegister) && (
+                  <td data-label="Thao tác" className="row-actions">
+                    {onEdit && <button className="table-button" type="button" onClick={() => onEdit(course)}>Sửa</button>}
+                    {onDelete && <button className="table-button danger-button" type="button" onClick={() => onDelete(course)}>Xóa</button>}
+                    {onRegister && <button className="table-button register-button" type="button" disabled={isFull || registeringId === course.id} onClick={() => onRegister(course)}>{registeringId === course.id ? 'Đang đăng ký...' : 'Đăng ký'}</button>}
+                  </td>
+                )}
               </tr>
             )
           })}

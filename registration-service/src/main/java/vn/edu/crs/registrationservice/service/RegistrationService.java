@@ -25,10 +25,11 @@ public class RegistrationService {
         this.courseClient = courseClient;
     }
 
-    public Registration register(RegistrationRequestDTO dto) {
+    public Registration register(RegistrationRequestDTO dto, Long authenticatedUserId) {
+        Long studentId = authenticatedUserId;
         boolean alreadyRegistered =
                 registrationRepository.existsByStudentIdAndCourseIdAndTrangThai(
-                        dto.getStudentId(),
+                        studentId,
                         dto.getCourseId(),
                         DA_DANG_KY
                 );
@@ -41,7 +42,7 @@ public class RegistrationService {
         courseClient.reserveSeat(dto.getCourseId());
 
         Registration registration = new Registration();
-        registration.setStudentId(dto.getStudentId());
+        registration.setStudentId(studentId);
         registration.setCourseId(dto.getCourseId());
         registration.setTrangThai(DA_DANG_KY);
         registration.setNgayDangKy(LocalDateTime.now());
@@ -49,7 +50,12 @@ public class RegistrationService {
         return registrationRepository.save(registration);
     }
 
-    public void cancel(Long registrationId) {
+    /** Compatibility overload retained for service-level tests from earlier labs. */
+    public Registration register(RegistrationRequestDTO dto) {
+        return register(dto, dto.getStudentId());
+    }
+
+    public void cancel(Long registrationId, Long authenticatedUserId) {
         Registration registration = registrationRepository.findById(registrationId)
                 .orElseThrow(() -> new NoSuchElementException(
                         "Không tìm thấy đăng ký có id = " + registrationId));
@@ -57,10 +63,24 @@ public class RegistrationService {
         if (DA_HUY.equals(registration.getTrangThai())) {
             throw new IllegalStateException("Đăng ký này đã được hủy trước đó");
         }
+        if (!authenticatedUserId.equals(registration.getStudentId())) {
+            throw new NoSuchElementException("Không tìm thấy đăng ký của tài khoản hiện tại");
+        }
 
         // Chỉ đổi trạng thái sau khi course-service xác nhận đã hoàn chỗ.
         courseClient.releaseSeat(registration.getCourseId());
         registration.setTrangThai(DA_HUY);
         registrationRepository.save(registration);
+    }
+
+    /** Compatibility overload retained for service-level tests from earlier labs. */
+    public void cancel(Long registrationId) {
+        Registration registration = registrationRepository.findById(registrationId)
+                .orElseThrow(() -> new NoSuchElementException("Không tìm thấy đăng ký có id = " + registrationId));
+        cancel(registrationId, registration.getStudentId());
+    }
+
+    public java.util.List<Registration> findByStudentId(Long studentId) {
+        return registrationRepository.findByStudentId(studentId);
     }
 }
