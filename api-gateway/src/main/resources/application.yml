@@ -13,6 +13,20 @@ spring:
               filters:
                 - RewritePath=/api/auth/(?<segment>.*), /auth/$\{segment}
 
+            - id: auth-service-api-keys-list
+              uri: ${AUTH_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/api-keys
+              filters:
+                - RewritePath=/api/api-keys, /api-keys
+
+            - id: auth-service-api-keys-detail
+              uri: ${AUTH_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/api-keys/**
+              filters:
+                - RewritePath=/api/api-keys/(?<segment>.*), /api-keys/$\{segment}
+
             - id: course-service-list
               uri: ${COURSE_SERVICE_URL:http://localhost:8085}
               predicates:
@@ -44,9 +58,9 @@ spring:
             - id: course-service-partner
               uri: ${COURSE_SERVICE_URL:http://localhost:8085}
               predicates:
-                - Path=/api/public/courses
+                - Path=/api/public/courses,/api/public/courses/**
               filters:
-                - RewritePath=/api/public/courses, /courses
+                - RewritePath=/api/public/courses(?<segment>/?.*), /courses$\{segment}
 
           globalcors:
             cors-configurations:
@@ -58,8 +72,12 @@ spring:
 server:
   port: 8080
 
-partner:
-  api-key: ${PARTNER_API_KEY:crs-partner-key-2026}
+services:
+  auth:
+    base-url: ${AUTH_SERVICE_URL:http://localhost:8081}
+
+api-key:
+  cache-ttl-seconds: ${API_KEY_CACHE_TTL_SECONDS:30}
 
 management:
   endpoints:

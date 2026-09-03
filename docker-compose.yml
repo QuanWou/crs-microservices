@@ -107,7 +107,7 @@ services:
       COURSE_SERVICE_URL: http://course-service:8085
       REGISTRATION_SERVICE_URL: http://registration-service:8083
       FRONTEND_ORIGIN: http://localhost:5173
-      PARTNER_API_KEY: crs-partner-key-2026
+      API_KEY_CACHE_TTL_SECONDS: 30
       TZ: Asia/Ho_Chi_Minh
     ports:
       - "8080:8080"
